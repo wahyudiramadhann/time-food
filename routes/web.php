@@ -7,13 +7,13 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\OrderController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/dashboard', [
+    Route::get('/', [
         DashboardController::class,
         'index'
     ])->name('dashboard');
