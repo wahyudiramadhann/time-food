@@ -7,11 +7,43 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    {{ __("You're logged in!") }}
+
+            @if(auth()->user()->role === 'restaurant')
+                {{-- DASHBOARD RESTO --}}
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4">Makanan Saya</h3>
+
+                    <a href="{{ route('foods.create') }}" class="text-blue-600 underline">
+                        + Tambah Makanan
+                    </a>
+
+                    <div class="mt-4">
+                        @forelse($foods as $food)
+                            <div class="border-b py-2">
+                                {{ $food->nama }} — Rp{{ number_format($food->harga) }} — Stok: {{ $food->stok }}
+                            </div>
+                        @empty
+                            <p>Belum ada makanan yang kamu tambahkan.</p>
+                        @endforelse
+                    </div>
                 </div>
-            </div>
+            @else
+                {{-- DASHBOARD USER --}}
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4">Makanan Tersedia</h3>
+
+                    <div class="mt-4">
+                        @forelse($foods as $food)
+                            <div class="border-b py-2">
+                                {{ $food->nama }} — Rp{{ number_format($food->harga) }}
+                            </div>
+                        @empty
+                            <p>Belum ada makanan tersedia saat ini.</p>
+                        @endforelse
+                    </div>
+                </div>
+            @endif
+
         </div>
     </div>
 </x-app-layout>
