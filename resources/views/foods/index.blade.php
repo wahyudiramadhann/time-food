@@ -1,4 +1,5 @@
-<x-app-layout>
+@extends('layouts.restaurant')
+@section('content')
 
     <div class="max-w-6xl py-6 mx-auto">
 
@@ -34,4 +35,4 @@
 
     </div>
 
-</x-app-layout>
+@endsection
