@@ -12,6 +12,19 @@ use App\Http\Controllers\PengaturanController;
 //     return view('welcome');
 // });
 
+// Login Restoran (custom page, redirect ke login biasa)
+Route::get('/restoran/login', function () {
+    if (auth()->check() && auth()->user()->role === 'restaurant') {
+        return redirect()->route('dashboard');
+    }
+    return view('auth.login-restoran');
+})->name('login.restoran');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/restoran/register', [\App\Http\Controllers\Auth\RestaurantAuthController::class, 'create'])->name('register.restoran');
+    Route::post('/restoran/register', [\App\Http\Controllers\Auth\RestaurantAuthController::class, 'store']);
+});
+
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/', [
@@ -23,6 +36,7 @@ Route::middleware(['auth'])->group(function () {
         'foods',
         FoodController::class
     );
+    Route::match(['get', 'patch'], '/foods/{food}/toggle-status', [FoodController::class, 'toggleStatus'])->name('foods.toggleStatus');
 
     // Routes sisi Restoran — Order Management
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');

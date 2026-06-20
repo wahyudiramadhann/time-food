@@ -15,13 +15,27 @@ class Food extends Model
         'foto',
         'stok',
         'harga',
+        'harga_asli',
         'jenis',
         'alamat',
         'latitude',
         'longitude',
-        'pickup_time',
+        'pickup_time_start',
+        'pickup_time_end',
         'status'
     ];
+
+    /**
+     * Scope for customer page: active, in stock, and currently within pickup time
+     */
+    public function scopeAvailable($query)
+    {
+        $now = now()->format('H:i:s');
+        return $query->where('status', 'aktif')
+                     ->where('stok', '>', 0)
+                     ->whereTime('pickup_time_start', '<=', $now)
+                     ->whereTime('pickup_time_end', '>=', $now);
+    }
 
     public function user()
     {

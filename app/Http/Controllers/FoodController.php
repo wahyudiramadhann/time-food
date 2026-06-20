@@ -8,11 +8,15 @@ use Illuminate\Support\Facades\Auth;
 
 class FoodController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $foods = Food::where('user_id', Auth::id())
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = Food::where('user_id', Auth::id());
+
+        if ($request->has('search') && $request->search != '') {
+            $query->where('nama', 'like', '%' . $request->search . '%');
+        }
+
+        $foods = $query->orderBy('created_at', 'desc')->get();
 
         return view('foods.index', compact('foods'));
     }
@@ -25,14 +29,16 @@ class FoodController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required',
-            'deskripsi' => 'nullable',
-            'harga' => 'required|numeric',
-            'stok' => 'required|integer',
-            'jenis' => 'required',
-            'alamat' => 'required',
-            'pickup_time' => 'required',
-            'foto' => 'nullable|image'
+            'nama' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
+            'harga' => 'required|numeric|min:0',
+            'harga_asli' => 'nullable|numeric|min:0',
+            'stok' => 'required|integer|min:0',
+            'jenis' => 'required|in:gacha,real food,real_food',
+            'alamat' => 'nullable|string',
+            'pickup_time_start' => 'required|date_format:H:i',
+            'pickup_time_end' => 'required|date_format:H:i|after:pickup_time_start',
+            'foto' => 'nullable|image|max:2048'
         ]);
 
         $foto = null;
@@ -48,9 +54,10 @@ class FoodController extends Controller
             'deskripsi' => $request->deskripsi,
             'harga' => $request->harga,
             'stok' => $request->stok,
-            'jenis' => $request->jenis,
-            'alamat' => $request->alamat,
-            'pickup_time' => $request->pickup_time,
+            'jenis' => str_replace(' ', '_', $request->jenis), // normalize: 'real food' → 'real_food'
+            'alamat' => $request->alamat ?? '',
+            'pickup_time_start' => $request->pickup_time_start,
+            'pickup_time_end' => $request->pickup_time_end,
             'foto' => $foto,
             'status' => 'aktif'
         ]);
@@ -77,14 +84,16 @@ class FoodController extends Controller
         }
 
         $request->validate([
-            'nama'        => 'required',
-            'deskripsi'   => 'nullable',
-            'harga'       => 'required|numeric',
-            'stok'        => 'required|integer',
-            'jenis'       => 'required|in:gacha,real_food',
-            'alamat'      => 'required',
-            'pickup_time' => 'required',
-            'status'      => 'required|in:aktif,habis',
+            'nama'        => 'required|string|max:255',
+            'deskripsi'   => 'nullable|string',
+            'harga'       => 'required|numeric|min:0',
+            'harga_asli'  => 'nullable|numeric|min:0',
+            'stok'        => 'required|integer|min:0',
+            'jenis'       => 'required|in:gacha,real food,real_food',
+            'alamat'      => 'nullable|string',
+            'pickup_time_start' => 'required|date_format:H:i',
+            'pickup_time_end' => 'required|date_format:H:i|after:pickup_time_start',
+            'status'      => 'nullable|in:aktif,habis,nonaktif',
             'foto'        => 'nullable|image|max:2048',
         ]);
 
@@ -99,10 +108,11 @@ class FoodController extends Controller
             'deskripsi'   => $request->deskripsi,
             'harga'       => $request->harga,
             'stok'        => $request->stok,
-            'jenis'       => $request->jenis,
-            'alamat'      => $request->alamat,
-            'pickup_time' => $request->pickup_time,
-            'status'      => $request->status,
+            'jenis'       => str_replace(' ', '_', $request->jenis), // normalize
+            'alamat'      => $request->alamat ?? '',
+            'pickup_time_start' => $request->pickup_time_start,
+            'pickup_time_end' => $request->pickup_time_end,
+            'status'      => $request->status ?? 'aktif',
             'foto'        => $foto,
         ]);
 
@@ -122,5 +132,19 @@ class FoodController extends Controller
         return redirect()
             ->route('foods.index')
             ->with('success', 'Makanan berhasil dihapus');
+    }
+
+    public function toggleStatus(Food $food)
+    {
+        if ($food->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $food->status = $food->status === 'aktif' ? 'nonaktif' : 'aktif';
+        $food->save();
+
+        return redirect()
+            ->route('foods.index')
+            ->with('success', 'Status makanan berhasil diubah');
     }
 }

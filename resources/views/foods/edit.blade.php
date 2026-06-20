@@ -1,109 +1,177 @@
 @extends('layouts.restaurant')
-
 @section('content')
-<div class="max-w-2xl mx-auto">
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Edit Makanan</h1>
-        <p class="text-gray-500 text-sm mt-1">Perbarui informasi listing makanan kamu</p>
+<div class="max-w-xl mx-auto space-y-5">
+    <div class="flex items-center gap-3">
+        <a href="{{ route('foods.index') }}"
+            class="w-9 h-9 rounded-lg bg-white shadow-sm flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors">
+            <i class="fa-solid fa-arrow-left text-sm"></i>
+        </a>
+        <div>
+            <h1 class="text-xl font-bold text-slate-800">Edit Makanan</h1>
+            <p class="text-slate-400 text-xs">Ubah informasi produk</p>
+        </div>
     </div>
 
-    @if ($errors->any())
-        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+    @if($errors->any())
+        <div class="bg-red-50 border border-red-200 rounded-xl p-4">
             <ul class="list-disc list-inside text-red-600 text-sm space-y-1">
-                @foreach ($errors->all() as $error)
+                @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
             </ul>
         </div>
     @endif
 
-    <div class="bg-white rounded-xl shadow-sm p-6">
-        <form action="{{ route('foods.update', $food->id) }}" method="POST" enctype="multipart/form-data" class="space-y-5">
-            @csrf
-            @method('PUT')
+    <form action="{{ route('foods.update', $food->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+        @csrf
+        @method('PUT')
 
-            {{-- Nama --}}
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Nama Makanan</label>
-                <input type="text" name="nama" value="{{ old('nama', $food->nama) }}"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-400" required>
-            </div>
-
-            {{-- Deskripsi --}}
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
-                <textarea name="deskripsi" rows="3"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-400">{{ old('deskripsi', $food->deskripsi) }}</textarea>
-            </div>
-
-            {{-- Harga & Stok --}}
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Harga (Rp)</label>
-                    <input type="number" name="harga" value="{{ old('harga', $food->harga) }}"
-                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-400" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Stok</label>
-                    <input type="number" name="stok" value="{{ old('stok', $food->stok) }}"
-                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-400" required>
-                </div>
-            </div>
-
-            {{-- Jenis & Status --}}
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Jenis</label>
-                    <select name="jenis" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-400">
-                        <option value="real_food" {{ $food->jenis === 'real_food' ? 'selected' : '' }}>Real Food</option>
-                        <option value="gacha" {{ $food->jenis === 'gacha' ? 'selected' : '' }}>Gacha</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                    <select name="status" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-400">
-                        <option value="aktif" {{ $food->status === 'aktif' ? 'selected' : '' }}>Aktif</option>
-                        <option value="habis" {{ $food->status === 'habis' ? 'selected' : '' }}>Habis</option>
-                    </select>
-                </div>
-            </div>
-
-            {{-- Alamat --}}
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Alamat Pickup</label>
-                <input type="text" name="alamat" value="{{ old('alamat', $food->alamat) }}"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-400" required>
-            </div>
-
-            {{-- Jam Pickup --}}
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Jam Pickup</label>
-                <input type="time" name="pickup_time" value="{{ old('pickup_time', $food->pickup_time) }}"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-400" required>
-            </div>
-
-            {{-- Foto --}}
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Foto (kosongkan jika tidak ingin mengubah)</label>
+        {{-- Upload Foto --}}
+        <div class="bg-white rounded-xl shadow-sm p-5">
+            <label class="block text-sm font-semibold text-slate-700 mb-3">Foto Makanan</label>
+            <div class="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center cursor-pointer hover:border-orange-400 transition-colors"
+                onclick="document.getElementById('fotoInput').click()">
                 @if($food->foto)
-                    <img src="{{ Storage::url($food->foto) }}" alt="foto" class="h-24 rounded-lg mb-2 object-cover">
+                    <img id="preview" src="{{ asset('storage/' . $food->foto) }}" class="mx-auto max-h-40 rounded-lg object-cover mb-2">
+                    <p class="text-xs text-slate-400">Klik untuk ganti foto</p>
+                @else
+                    <img id="preview" src="" alt="" class="hidden mx-auto max-h-40 rounded-lg object-cover mb-3">
+                    <div id="placeholder">
+                        <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mx-auto mb-3">
+                            <i class="fa-solid fa-cloud-arrow-up text-orange-400 text-xl"></i>
+                        </div>
+                        <p class="text-sm font-medium text-slate-600">Klik untuk upload foto</p>
+                        <p class="text-xs text-slate-400 mt-1">PNG, JPG, WEBP · Max 2MB</p>
+                    </div>
                 @endif
-                <input type="file" name="foto" accept="image/*"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5">
+                <input type="file" id="fotoInput" name="foto" accept="image/*" class="hidden"
+                    onchange="previewImage(event)">
             </div>
+        </div>
 
-            {{-- Buttons --}}
-            <div class="flex gap-3 pt-2">
-                <button type="submit"
-                    class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2.5 rounded-lg transition-colors">
-                    Simpan Perubahan
-                </button>
-                <a href="{{ route('foods.index') }}"
-                    class="flex-1 text-center border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-2.5 rounded-lg transition-colors">
-                    Batal
-                </a>
+        {{-- Info Produk --}}
+        <div class="bg-white rounded-xl shadow-sm p-5 space-y-4">
+            <h3 class="text-sm font-semibold text-slate-700">Informasi Produk</h3>
+            <div>
+                <label class="block text-xs font-medium text-slate-500 mb-1.5">Nama Produk</label>
+                <input type="text" name="nama" value="{{ old('nama', $food->nama) }}" required
+                    class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-slate-50">
             </div>
-        </form>
-    </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-500 mb-1.5">Deskripsi</label>
+                <textarea name="deskripsi" rows="3"
+                    class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-slate-50 resize-none">{{ old('deskripsi', $food->deskripsi) }}</textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-500 mb-1.5">Jumlah Stok</label>
+                    <input type="number" name="stok" value="{{ old('stok', $food->stok) }}" min="0" required
+                        class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-slate-50">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-1.5">Dari Jam</label>
+                        <input type="time" name="pickup_time_start" value="{{ old('pickup_time_start', $food->pickup_time_start ? date('H:i', strtotime($food->pickup_time_start)) : '') }}" required
+                            class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-slate-50">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-1.5">Sampai Jam</label>
+                        <input type="time" name="pickup_time_end" value="{{ old('pickup_time_end', $food->pickup_time_end ? date('H:i', strtotime($food->pickup_time_end)) : '') }}" required
+                            class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-slate-50">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Harga --}}
+        <div class="bg-white rounded-xl shadow-sm p-5 space-y-4">
+            <h3 class="text-sm font-semibold text-slate-700">Harga</h3>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-500 mb-1.5">Harga Asli</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">Rp</span>
+                        <input type="number" name="harga_asli" value="{{ old('harga_asli', $food->harga_asli ?? '') }}"
+                            class="w-full border border-slate-200 rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-slate-50" placeholder="0">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-500 mb-1.5">Harga Jual</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">Rp</span>
+                        <input type="number" name="harga" value="{{ old('harga', $food->harga) }}" required
+                            class="w-full border border-slate-200 rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-slate-50" placeholder="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Kategori --}}
+        <div class="bg-white rounded-xl shadow-sm p-5">
+            <h3 class="text-sm font-semibold text-slate-700 mb-3">Kategori</h3>
+
+            <input type="hidden" name="jenis" id="jenis_input" value="{{ old('jenis', str_replace(' ', '_', $food->jenis)) }}">
+
+            <div class="grid grid-cols-2 gap-3">
+                <button type="button" onclick="selectJenis('gacha')" id="btn_gacha"
+                    class="jenis-btn border-2 rounded-xl p-4 text-center transition-all duration-150 border-slate-200 bg-white">
+                    <i class="fa-solid fa-dice text-2xl text-slate-400 mb-2 block" id="icon_gacha"></i>
+                    <p class="text-sm font-semibold text-slate-700">Gacha</p>
+                    <p class="text-xs text-slate-400">Paket kejutan</p>
+                </button>
+                <button type="button" onclick="selectJenis('real_food')" id="btn_real_food"
+                    class="jenis-btn border-2 rounded-xl p-4 text-center transition-all duration-150 border-slate-200 bg-white">
+                    <i class="fa-solid fa-bowl-food text-2xl text-slate-400 mb-2 block" id="icon_real_food"></i>
+                    <p class="text-sm font-semibold text-slate-700">Real Food</p>
+                    <p class="text-xs text-slate-400">Makanan biasa</p>
+                </button>
+            </div>
+        </div>
+
+        <button type="submit"
+            class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3.5 rounded-xl transition-colors text-sm">
+            <i class="fa-solid fa-floppy-disk mr-2"></i>Simpan Perubahan
+        </button>
+    </form>
 </div>
+
+<script>
+function previewImage(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+        const preview = document.getElementById('preview');
+        preview.src = ev.target.result;
+        preview.classList.remove('hidden');
+        const placeholder = document.getElementById('placeholder');
+        if (placeholder) placeholder.classList.add('hidden');
+    };
+    reader.readAsDataURL(file);
+}
+
+function selectJenis(val) {
+    document.getElementById('jenis_input').value = val;
+
+    ['gacha', 'real_food'].forEach(b => {
+        const btn = document.getElementById('btn_' + b);
+        const icon = document.getElementById('icon_' + b);
+        if (b === val) {
+            btn.classList.remove('border-slate-200', 'bg-white');
+            btn.classList.add('border-orange-500', 'bg-orange-50');
+            icon.classList.remove('text-slate-400');
+            icon.classList.add('text-orange-500');
+        } else {
+            btn.classList.remove('border-orange-500', 'bg-orange-50');
+            btn.classList.add('border-slate-200', 'bg-white');
+            icon.classList.remove('text-orange-500');
+            icon.classList.add('text-slate-400');
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    selectJenis(document.getElementById('jenis_input').value || 'real_food');
+});
+</script>
 @endsection

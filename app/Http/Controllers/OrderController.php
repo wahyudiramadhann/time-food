@@ -6,6 +6,7 @@ use App\Models\Food;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
@@ -96,7 +97,42 @@ class OrderController extends Controller
      */
     public function store(Request $request, Food $food)
     {
-        // Placeholder — akan dikerjakan oleh partner (customer side)
-        abort(501, 'Belum diimplementasi');
+        // Fitur Checkout Sisi Customer (Basic Logic)
+        $request->validate([
+            'qty' => 'required|integer|min:1'
+        ]);
+
+        if ($food->stok < $request->qty) {
+            return back()->with('error', 'Stok tidak mencukupi');
+        }
+
+        if ($food->status !== 'aktif') {
+            return back()->with('error', 'Makanan sedang tidak tersedia');
+        }
+
+        // Potong stok
+        $food->stok -= $request->qty;
+
+        // Auto non-aktif kalau stok habis
+        if ($food->stok <= 0) {
+            $food->status = 'habis';
+        }
+        $food->save();
+
+        // Generate pickup code
+        $pickupCode = 'TF-' . strtoupper(Str::random(6));
+
+        // Create Order
+        $order = Order::create([
+            'user_id' => Auth::id(), // ID Customer
+            'food_id' => $food->id,
+            'qty' => $request->qty,
+            'total' => $food->harga * $request->qty,
+            'pickup_code' => $pickupCode,
+            'status' => 'pending'
+        ]);
+
+        // Nanti partner bisa arahkan route ke halaman detail pesanan customer
+        return redirect()->route('dashboard')->with('success', 'Pesanan berhasil dibuat');
     }
 }
