@@ -16,78 +16,75 @@
             </div>
         @endif
 
-        <div>
-            <label>Nama Makanan</label>
-            <input type="text" name="nama" class="w-full border" required>
-        </div>
+        <form action="{{ route('foods.store') }}" method="POST" enctype="multipart/form-data">
 
-        <br>
+            @csrf
 
-        <div>
-            <label>Deskripsi</label>
-            <textarea name="deskripsi" class="w-full border"></textarea>
-        </div>
+            <div>
+                <label>Nama Makanan</label>
+                <input type="text" name="nama" class="w-full border" required>
+            </div>
 
-        <br>
+            <br>
 
-        <div>
-            <label>Harga</label>
-            <input type="number" name="harga" class="w-full border" required>
-        </div>
+            <div>
+                <label>Deskripsi</label>
+                <textarea name="deskripsi" class="w-full border"></textarea>
+            </div>
 
-        <br>
+            <br>
 
-        <div>
-            <label>Stok</label>
-            <input type="number" name="stok" class="w-full border" required>
-        </div>
+            <div>
+                <label>Harga</label>
+                <input type="number" name="harga" class="w-full border" required>
+            </div>
 
-        <br>
+            <br>
 
-        <div>
-            <label>Jenis</label>
+            <div>
+                <label>Stok</label>
+                <input type="number" name="stok" class="w-full border" required>
+            </div>
 
-            <select name="jenis" class="w-full border">
-                <option value="real_food">
-                    Real Food
-                </option>
+            <br>
 
-                <option value="gacha">
-                    Gacha
-                </option>
-            </select>
-        </div>
+            <div>
+                <label>Jenis</label>
 
-        <br>
+                <select name="jenis" class="w-full border">
+                    <option value="real_food">Real Food</option>
+                    <option value="gacha">Gacha</option>
+                </select>
+            </div>
 
-        <div>
-            <label>Alamat</label>
+            <br>
 
-            <input type="text" name="alamat" class="w-full border" required>
-        </div>
+            <div>
+                <label>Alamat</label>
+                <input type="text" name="alamat" class="w-full border" required>
+            </div>
 
-        <br>
+            <br>
 
-        <div>
-            <label>Jam Pickup</label>
+            <div>
+                <label>Jam Pickup</label>
+                <input type="time" name="pickup_time" class="w-full border" required>
+            </div>
 
-            <input type="time" name="pickup_time" class="w-full border" required>
-        </div>
+            <br>
 
-        <br>
+            <div>
+                <label>Foto</label>
+                <input type="file" name="foto">
+            </div>
 
-        <div>
-            <label>Foto</label>
+            <br>
 
-            <input type="file" name="foto">
-        </div>
+            <button type="submit"
+                style="background:#2563eb;color:white;padding:10px 20px;border:none;border-radius:5px;">
+                Simpan
+            </button>
 
-        <br>
-
-        <button type="submit"
-            style="background:#2563eb;color:white;padding:10px 20px;border:none;border-radius:5px;cursor:pointer;">
-            Simpan
-        </button>
         </form>
 
     </div>

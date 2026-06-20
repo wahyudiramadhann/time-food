@@ -22,9 +22,4 @@ class Food extends Model
         'pickup_time',
         'status'
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 }

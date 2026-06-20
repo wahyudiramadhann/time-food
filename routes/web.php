@@ -6,12 +6,26 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\MenuController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 Route::middleware(['auth'])->group(function () {
+
+    Route::get('/my-orders', [OrderController::class, 'index'])
+    ->name('orders.index');
+
+    Route::get('/menu', [
+    MenuController::class,
+    'index'
+])->name('menu.index');
+
+Route::get('/menu/{food}', [
+    MenuController::class,
+    'show'
+])->name('menu.show'); 
 
     Route::get('/dashboard', [
         DashboardController::class,

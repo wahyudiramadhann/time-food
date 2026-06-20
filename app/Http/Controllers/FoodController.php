@@ -17,11 +17,19 @@ class FoodController extends Controller
 
     public function create()
     {
+        if (!Auth::check() || Auth::user()->role !== 'restaurant') {
+            abort(403);
+        }
+
         return view('foods.create');
     }
 
     public function store(Request $request)
     {
+        if (!Auth::check() || Auth::user()->role !== 'restaurant') {
+            abort(403);
+        }
+
         $request->validate([
             'nama' => 'required',
             'deskripsi' => 'nullable',
@@ -30,7 +38,7 @@ class FoodController extends Controller
             'jenis' => 'required',
             'alamat' => 'required',
             'pickup_time' => 'required',
-            'foto' => 'nullable|image'
+            'foto' => 'nullable|image',
         ]);
 
         $foto = null;
@@ -56,5 +64,10 @@ class FoodController extends Controller
         return redirect()
             ->route('foods.index')
             ->with('success', 'Makanan berhasil ditambahkan');
+    }
+
+    public function show(Food $food)
+    {
+        return view('foods.show', compact('food'));
     }
 }
