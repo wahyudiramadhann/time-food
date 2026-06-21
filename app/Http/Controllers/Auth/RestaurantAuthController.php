@@ -31,8 +31,6 @@ class RestaurantAuthController extends Controller
             'role' => 'restaurant',
         ]);
 
-        Auth::login($user);
-
-        return redirect()->route('dashboard')->with('success', 'Berhasil mendaftar sebagai restoran');
+        return redirect()->route('login.restoran')->with('success', 'Berhasil mendaftar sebagai restoran. Silakan login.');
     }
 }

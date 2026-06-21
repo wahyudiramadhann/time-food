@@ -1,0 +1,44 @@
+=========================================================
+      PANDUAN TESTING APLIKASI TIMEFOOD
+=========================================================
+
+1. CARA MENJALANKAN APLIKASI (Di Komputer Lokal)
+---------------------------------------------------------
+Pastikan XAMPP/Laragon sudah menyala (Apache & MySQL).
+Buka terminal/CMD di dalam folder project ini, lalu jalankan 2 perintah berikut di tab/jendela terminal yang berbeda:
+
+Terminal 1:
+php artisan serve
+
+Terminal 2:
+npm run dev
+
+Buka browser dan akses: http://127.0.0.1:8000
+
+
+2. RESET DATABASE & DATA DUMMY
+---------------------------------------------------------
+Jika kamu baru pertama kali menjalankan aplikasi ini, atau ingin mengembalikan data ke keadaan awal (reset), jalankan perintah ini di terminal:
+
+php artisan migrate:fresh --seed
+
+(Perintah ini akan membuat ulang database dan mengisi data makanan beserta gambar dummy otomatis).
+
+
+3. AKUN LOGIN UNTUK TESTING
+---------------------------------------------------------
+Aplikasi ini memiliki 2 jenis akun (Customer dan Restoran). Gunakan email dan password di bawah ini untuk mencoba login:
+
+>> AKUN CUSTOMER (Untuk mencoba order makanan)
+Email    : customer@timefood.com
+Password : password123
+
+>> AKUN RESTORAN (Untuk menambah/edit makanan dan cek pesanan)
+Email    : solaria@timefood.com
+Password : password123
+
+
+4. CATATAN PENTING TENTANG FOTO UPLOAD
+---------------------------------------------------------
+Jika kamu mencoba upload foto profil, gambar tersebut disimpan secara lokal di folder penyimpanan komputermu (/storage). Foto ini TIDAK akan ikut ter-upload ke GitHub karena sudah di-block oleh konfigurasi Git bawaan (supaya repository tidak berat). 
+Jadi jika temanmu men-download kode ini, mereka tidak akan melihat foto profil yang kamu upload di komputermu, dan harus mengunggah foto mereka sendiri saat melakukan testing.

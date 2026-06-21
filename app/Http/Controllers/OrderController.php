@@ -37,7 +37,7 @@ class OrderController extends Controller
             ->latest()
             ->get();
 
-        return view('orders.index', compact('orders'));
+        return view('orders.my-orders', compact('orders'));
     }
 
     /**
@@ -146,6 +146,41 @@ class OrderController extends Controller
             'status' => 'pending'
         ]);
 
-        return redirect()->route('my-orders.index')->with('success', 'Pesanan berhasil dibuat');
+        return redirect()->route('orders.checkout', $order->id);
+    }
+
+    public function checkout(Order $order)
+    {
+        if ($order->user_id !== Auth::id() || $order->status !== 'pending') {
+            abort(403);
+        }
+        $order->load('food');
+        return view('orders.checkout', compact('order'));
+    }
+
+    public function pay(Request $request, Order $order)
+    {
+        if ($order->user_id !== Auth::id() || $order->status !== 'pending') {
+            abort(403);
+        }
+        
+        $order->update(['status' => 'paid']);
+        return redirect()->route('my-orders.show', $order->id)->with('success', 'Pembayaran berhasil! Pesanan sedang diproses.');
+    }
+
+    public function myOrderDetail(Order $order)
+    {
+        if ($order->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        // Simulasi update otomatis (jika baru paid, ubah jadi ready setelah diakses untuk presentasi)
+        // Di kenyataan, ini diupdate oleh Restoran.
+        if ($order->status === 'paid') {
+            $order->update(['status' => 'ready']);
+        }
+
+        $order->load('food.user');
+        return view('orders.my-order-detail', compact('order'));
     }
 }

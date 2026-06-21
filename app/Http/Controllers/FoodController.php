@@ -49,35 +49,39 @@ class FoodController extends Controller
             'foto' => 'nullable|image|max:2048'
         ]);
 
-        $foto = null;
+        try {
+            $foto = null;
 
-        if ($request->hasFile('foto')) {
-            $foto = $request->file('foto')
-                ->store('foods', 'public');
+            if ($request->hasFile('foto')) {
+                $foto = $request->file('foto')
+                    ->store('foods', 'public');
+            }
+
+            Food::create([
+                'user_id' => Auth::id(),
+                'nama' => $request->nama,
+                'deskripsi' => $request->deskripsi,
+                'harga' => $request->harga,
+                'harga_asli' => $request->harga_asli, // added
+                'stok' => $request->stok,
+                'jenis' => str_replace(' ', '_', $request->jenis),
+                'alamat' => $request->alamat ?? '',
+                'pickup_time_start' => $request->pickup_time_start,
+                'pickup_time_end' => $request->pickup_time_end,
+                'foto' => $foto,
+                'status' => 'aktif'
+            ]);
+
+            return redirect()
+                ->route('foods.index')
+                ->with('success', 'Makanan berhasil ditambahkan');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-
-        Food::create([
-            'user_id' => Auth::id(),
-            'nama' => $request->nama,
-            'deskripsi' => $request->deskripsi,
-            'harga' => $request->harga,
-            'stok' => $request->stok,
-            'jenis' => str_replace(' ', '_', $request->jenis), // normalize: 'real food' → 'real_food'
-            'alamat' => $request->alamat ?? '',
-            'pickup_time_start' => $request->pickup_time_start,
-            'pickup_time_end' => $request->pickup_time_end,
-            'foto' => $foto,
-            'status' => 'aktif'
-        ]);
-
-        return redirect()
-            ->route('foods.index')
-            ->with('success', 'Makanan berhasil ditambahkan');
     }
 
     public function edit(Food $food)
     {
-        // Pastikan yang edit adalah pemilik food
         if ($food->user_id !== Auth::id()) {
             abort(403);
         }
@@ -105,28 +109,33 @@ class FoodController extends Controller
             'foto'        => 'nullable|image|max:2048',
         ]);
 
-        $foto = $food->foto; // default: foto lama
+        try {
+            $foto = $food->foto;
 
-        if ($request->hasFile('foto')) {
-            $foto = $request->file('foto')->store('foods', 'public');
+            if ($request->hasFile('foto')) {
+                $foto = $request->file('foto')->store('foods', 'public');
+            }
+
+            $food->update([
+                'nama'        => $request->nama,
+                'deskripsi'   => $request->deskripsi,
+                'harga'       => $request->harga,
+                'harga_asli'  => $request->harga_asli, // added
+                'stok'        => $request->stok,
+                'jenis'       => str_replace(' ', '_', $request->jenis),
+                'alamat'      => $request->alamat ?? '',
+                'pickup_time_start' => $request->pickup_time_start,
+                'pickup_time_end' => $request->pickup_time_end,
+                'status'      => $request->status ?? 'aktif',
+                'foto'        => $foto,
+            ]);
+
+            return redirect()
+                ->route('foods.index')
+                ->with('success', 'Makanan berhasil diperbarui');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-
-        $food->update([
-            'nama'        => $request->nama,
-            'deskripsi'   => $request->deskripsi,
-            'harga'       => $request->harga,
-            'stok'        => $request->stok,
-            'jenis'       => str_replace(' ', '_', $request->jenis), // normalize
-            'alamat'      => $request->alamat ?? '',
-            'pickup_time_start' => $request->pickup_time_start,
-            'pickup_time_end' => $request->pickup_time_end,
-            'status'      => $request->status ?? 'aktif',
-            'foto'        => $foto,
-        ]);
-
-        return redirect()
-            ->route('foods.index')
-            ->with('success', 'Makanan berhasil diperbarui');
     }
 
     public function destroy(Food $food)
@@ -135,11 +144,15 @@ class FoodController extends Controller
             abort(403);
         }
 
-        $food->delete();
+        try {
+            $food->delete();
 
-        return redirect()
-            ->route('foods.index')
-            ->with('success', 'Makanan berhasil dihapus');
+            return redirect()
+                ->route('foods.index')
+                ->with('success', 'Makanan berhasil dihapus');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 
     public function toggleStatus(Food $food)
@@ -154,6 +167,5 @@ class FoodController extends Controller
         return redirect()
             ->route('foods.index')
             ->with('success', 'Status makanan berhasil diubah');
-    }
     }
 }

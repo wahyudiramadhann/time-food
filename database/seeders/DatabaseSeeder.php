@@ -50,6 +50,7 @@ class DatabaseSeeder extends Seeder
                 'jenis' => 'real_food',
                 'pickup_time_start' => '20:00:00',
                 'pickup_time_end' => '22:00:00',
+                'foto' => 'https://images.unsplash.com/photo-1512058564366-18510be2db19?q=80&w=2072&auto=format&fit=crop',
             ],
             [
                 'nama' => 'Misteri Box Nasi (Gacha)',
@@ -60,6 +61,7 @@ class DatabaseSeeder extends Seeder
                 'jenis' => 'gacha',
                 'pickup_time_start' => '21:00:00',
                 'pickup_time_end' => '22:30:00',
+                'foto' => 'https://images.unsplash.com/photo-1626844131082-256783844137?q=80&w=1935&auto=format&fit=crop',
             ],
             [
                 'nama' => 'Chicken Cordon Bleu (Sisa Etalase)',
@@ -70,6 +72,7 @@ class DatabaseSeeder extends Seeder
                 'jenis' => 'real_food',
                 'pickup_time_start' => '19:00:00',
                 'pickup_time_end' => '21:00:00',
+                'foto' => 'https://images.unsplash.com/photo-1598514982205-f36b96d1e8d4?q=80&w=2070&auto=format&fit=crop',
             ],
             [
                 'nama' => 'Sweet Treat Gacha',
@@ -80,6 +83,7 @@ class DatabaseSeeder extends Seeder
                 'jenis' => 'gacha',
                 'pickup_time_start' => '15:00:00',
                 'pickup_time_end' => '18:00:00',
+                'foto' => 'https://images.unsplash.com/photo-1563805042-7684c8e9e5cb?q=80&w=1969&auto=format&fit=crop',
             ]
         ];
 

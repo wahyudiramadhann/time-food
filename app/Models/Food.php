@@ -40,4 +40,13 @@ class Food extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function getFotoUrlAttribute()
+    {
+        if (!$this->foto) return null;
+        if (\Illuminate\Support\Str::startsWith($this->foto, 'http')) {
+            return $this->foto;
+        }
+        return asset('storage/' . $this->foto);
+    }
 }

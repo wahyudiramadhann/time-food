@@ -4,8 +4,15 @@
         <div class="flex justify-between h-16">
             <div class="flex">
 
-                <!-- Authentication -->
-
+                <!-- Navigation Links -->
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-nav-link :href="route('menu.index')" :active="request()->routeIs('menu.*')">
+                        {{ __('Menu Makanan') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('my-orders.index')" :active="request()->routeIs('my-orders.*')">
+                        {{ __('Pesanan Saya') }}
+                    </x-nav-link>
+                </div>
 
                 <!-- Hamburger -->
                 <div class="flex items-center -me-2 sm:hidden">
@@ -22,13 +29,26 @@
                     </button>
                 </div>
             </div>
+            
+            <div class="hidden sm:flex sm:items-center sm:ml-6">
+                <!-- Settings Dropdown -->
+                <div class="relative ml-3">
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="text-sm font-medium text-gray-500 hover:text-gray-700">Log Out</button>
+                    </form>
+                </div>
+            </div>
         </div>
 
         <!-- Responsive Navigation Menu -->
         <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
             <div class="pt-2 pb-3 space-y-1">
-                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                    {{ __('Dashboard') }}
+                <x-responsive-nav-link :href="route('menu.index')" :active="request()->routeIs('menu.*')">
+                    {{ __('Menu Makanan') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('my-orders.index')" :active="request()->routeIs('my-orders.*')">
+                    {{ __('Pesanan Saya') }}
                 </x-responsive-nav-link>
             </div>
 

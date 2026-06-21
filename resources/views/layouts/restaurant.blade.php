@@ -91,27 +91,50 @@
     <!-- Main -->
     <div class="flex-1 flex flex-col overflow-hidden">
         <!-- Topbar -->
-        <header class="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-6 flex-shrink-0">
+        <header class="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-6 flex-shrink-0" x-data="{ profileDropdownOpen: false }">
             <div class="md:hidden">
-                <img src="{{ asset('images/logo.svg') }}" alt="TimeFood" class="h-7">
+                <span class="text-base font-black text-slate-800 leading-none">Time<span class="text-orange-500">Food</span></span>
             </div>
             <div class="hidden md:flex items-center gap-2 text-sm text-slate-500">
                 <i class="fa-solid fa-circle-dot text-orange-500 text-xs"></i>
                 Panel Restoran
             </div>
-            <div class="flex items-center gap-3">
+            
+            <!-- Right Actions & Profile Dropdown -->
+            <div class="flex items-center gap-4 relative">
                 <div class="text-right hidden sm:block">
                     <p class="text-sm font-semibold text-slate-800">{{ auth()->user()->name ?? 'Restoran' }}</p>
                     <p class="text-xs text-slate-400">Pemilik Restoran</p>
                 </div>
-                @if(auth()->user()->foto)
-                    <img src="{{ asset('storage/' . auth()->user()->foto) }}"
-                        class="w-9 h-9 rounded-full object-cover border-2 border-orange-200" alt="Foto Restoran">
-                @else
-                    <div class="w-9 h-9 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-sm">
-                        {{ substr(auth()->user()->name ?? 'R', 0, 1) }}
+                
+                <button @click="profileDropdownOpen = !profileDropdownOpen" @click.away="profileDropdownOpen = false" class="flex items-center focus:outline-none transition-transform hover:scale-105">
+                    @if(auth()->user()->foto)
+                        <img src="{{ asset('storage/' . auth()->user()->foto) }}"
+                            class="w-10 h-10 rounded-full object-cover border-2 border-orange-200 shadow-sm" alt="Foto Restoran">
+                    @else
+                        <div class="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-sm shadow-sm border-2 border-white">
+                            {{ substr(auth()->user()->name ?? 'R', 0, 1) }}
+                        </div>
+                    @endif
+                </button>
+
+                <!-- Profile Dropdown Menu -->
+                <div x-show="profileDropdownOpen" x-transition x-cloak class="absolute right-0 top-12 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50">
+                    <div class="px-4 py-3 border-b border-slate-100 mb-2">
+                        <p class="text-sm font-bold text-slate-800">{{ auth()->user()->name }}</p>
+                        <p class="text-xs text-slate-500">{{ auth()->user()->email }}</p>
                     </div>
-                @endif
+                    <a href="{{ route('pengaturan.index') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+                        <i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan
+                    </a>
+                    <div class="border-t border-slate-100 my-2"></div>
+                    <form method="POST" action="{{ route('logout') }}" id="dropdown-logout-form">
+                        @csrf
+                        <button type="button" onclick="confirmLogout()" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                            <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Keluar
+                        </button>
+                    </form>
+                </div>
             </div>
         </header>
         <!-- Content -->
