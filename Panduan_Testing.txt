@@ -30,7 +30,7 @@ php artisan migrate:fresh --seed
 Aplikasi ini memiliki 2 jenis akun (Customer dan Restoran). Gunakan email dan password di bawah ini untuk mencoba login:
 
 >> AKUN CUSTOMER (Untuk mencoba order makanan)
-Email    : customer@timefood.com
+Email    : wahyudiramadhan893@gmail.com
 Password : password123
 
 >> AKUN RESTORAN (Untuk menambah/edit makanan dan cek pesanan)
